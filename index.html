@@ -1,66 +1,67 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="pink">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Nagwa Book Artworks</title>
+  <title>Nagwa | Book Artworks</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/styles.css">
 </head>
 <body>
-  <header class="site-header">
+  <header class="main-header">
     <div class="header-inner">
-      <div class="brand">
-        <div class="brand-mark" aria-hidden="true">N</div>
-        <div>
-          <h1>Book Artworks</h1>
-          <p class="brand-sub">Browse cover illustrations by subject</p>
-        </div>
-      </div>
-      <div class="header-stats">
-        <span id="total-count" class="stat-pill">— artworks</span>
-      </div>
+      <a class="logo-link" href="./" aria-label="Nagwa home">
+        <img src="logo.svg" alt="Nagwa" class="logo" width="120" height="42">
+      </a>
+      <span id="total-count" class="header-badge">— artworks</span>
     </div>
   </header>
 
-  <section class="toolbar" aria-label="Filters">
-    <div class="toolbar-inner">
-      <div class="field">
-        <label for="subject-select">Subject</label>
-        <select id="subject-select">
-          <option value="">All subjects</option>
-        </select>
-      </div>
-      <div class="field field-grow">
-        <label for="search-input">Search</label>
-        <div class="search-wrap">
-          <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
-            <circle cx="11" cy="11" r="7"></circle>
-            <path d="M20 20L16 16"></path>
-          </svg>
-          <input id="search-input" type="search" placeholder="Search by artwork name, e.g. science_012" autocomplete="off">
+  <section class="library-section">
+    <div class="container">
+      <div class="library-section__content">
+        <div class="library-section__header">
+          <div class="library-section__title-wrapper">
+            <h1 class="library-section__title">Book Artworks</h1>
+            <p class="library-section__description">Browse cover illustrations by subject. Click any artwork to copy its name.</p>
+          </div>
+        </div>
+
+        <div class="filters-panel" aria-label="Filters">
+          <div class="filters-row">
+            <div class="field">
+              <label for="subject-select">Subject</label>
+              <select id="subject-select">
+                <option value="">All subjects</option>
+              </select>
+            </div>
+            <div class="field field-grow">
+              <label for="search-input">Search</label>
+              <div class="search-wrap">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                  <circle cx="11" cy="11" r="7"></circle>
+                  <path d="M20 20L16 16"></path>
+                </svg>
+                <input id="search-input" type="search" placeholder="Search by artwork name, e.g. science_012" autocomplete="off">
+              </div>
+            </div>
+            <button id="clear-filters" type="button" class="btn-clear">Clear</button>
+          </div>
+          <p id="results-summary" class="results-summary" aria-live="polite"></p>
+        </div>
+
+        <div id="grid" class="library-section__grid" role="list"></div>
+        <div id="empty-state" class="empty-state hidden">
+          <p>No artworks match your filters.</p>
+          <button type="button" class="btn-clear" id="empty-clear">Clear filters</button>
         </div>
       </div>
-      <button id="clear-filters" type="button" class="btn-secondary">Clear</button>
     </div>
-    <p id="results-summary" class="results-summary" aria-live="polite"></p>
   </section>
 
-  <main class="main">
-    <div id="grid" class="grid" role="list"></div>
-    <div id="empty-state" class="empty-state hidden">
-      <p>No artworks match your filters.</p>
-      <button type="button" class="btn-secondary" id="empty-clear">Clear filters</button>
-    </div>
-  </main>
-
   <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
-
-  <footer class="site-footer">
-    <p>Click any card to copy the artwork name to your clipboard.</p>
-  </footer>
 
   <script src="js/app.js"></script>
 </body>

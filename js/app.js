@@ -85,13 +85,15 @@
       card.setAttribute("aria-label", item.name);
 
       card.innerHTML =
-        '<div class="card-thumb">' +
-          '<img src="' + item.thumb + '" alt="" loading="lazy" decoding="async">' +
-        "</div>" +
-        '<div class="card-body">' +
-          '<p class="card-name">' + item.name + "</p>" +
-          '<p class="card-subject">' + formatSubjectLabel(item.subject) + "</p>" +
-          '<p class="card-hint">Click to copy name</p>' +
+        '<div class="card-inner">' +
+          '<div class="card-thumb">' +
+            '<img src="' + item.thumb + '" alt="" loading="lazy" decoding="async">' +
+          "</div>" +
+          '<div class="card-body">' +
+            '<p class="card-name">' + item.name + "</p>" +
+            '<p class="card-subject">' + formatSubjectLabel(item.subject) + "</p>" +
+            '<p class="card-hint">Click to copy name</p>' +
+          "</div>" +
         "</div>";
 
       function handleActivate() {
