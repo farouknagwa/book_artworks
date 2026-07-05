@@ -265,7 +265,7 @@ input[type="search"]:focus {
 .card-thumb {
   flex: 0 0 auto;
   height: calc(var(--card-thumb-image-height) + 1.5rem);
-  background: var(--grey-100);
+  background: var(--white);
   display: grid;
   place-items: center;
   padding: 0.75rem;
