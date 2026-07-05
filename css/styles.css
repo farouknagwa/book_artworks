@@ -36,6 +36,8 @@ body {
   background: var(--bg-page);
   line-height: 1.5;
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .hidden {
@@ -88,6 +90,7 @@ body {
 .library-section {
   padding: 32px 0 48px;
   background-color: var(--white);
+  flex: 1;
 }
 
 .container {
@@ -337,6 +340,24 @@ input[type="search"]:focus {
 .toast.show {
   opacity: 1;
   transform: translateX(-50%) translateY(0);
+}
+
+.site-footer {
+  padding: 2rem 1.5rem 2.5rem;
+  text-align: center;
+  background: var(--white);
+  border-top: 1px solid var(--border);
+}
+
+.site-footer p {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--nagwa-gray);
+}
+
+.site-footer p + p {
+  margin-top: 0.15rem;
 }
 
 @media (max-width: 640px) {
