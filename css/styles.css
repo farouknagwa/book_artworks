@@ -17,6 +17,7 @@
   --card-shadow: 0 0 20px 0 rgba(0, 0, 0, 0.16);
   --radius: 8px;
   --radius-sm: 4px;
+  --card-thumb-image-height: 314px;
 }
 
 *,
@@ -263,7 +264,7 @@ input[type="search"]:focus {
 
 .card-thumb {
   flex: 0 0 auto;
-  height: 180px;
+  height: calc(var(--card-thumb-image-height) + 1.5rem);
   background: var(--grey-100);
   display: grid;
   place-items: center;

@@ -12,7 +12,19 @@
   const toast = document.getElementById("toast");
 
   let catalog = { subjects: [], artworks: [] };
+  let thumbMetrics = { maxHeight: 314, maxWidth: 240 };
   let toastTimer = null;
+
+  function applyThumbMetrics(metrics) {
+    if (!metrics || !metrics.maxHeight) {
+      return;
+    }
+    thumbMetrics = metrics;
+    document.documentElement.style.setProperty(
+      "--card-thumb-image-height",
+      metrics.maxHeight + "px"
+    );
+  }
 
   function formatSubjectLabel(subject) {
     return subject.replace(/_/g, " ");
@@ -246,6 +258,16 @@
       populateSubjects();
       initFromQuery();
       bindEvents();
+      return fetch("data/thumb_metrics.json");
+    })
+    .then(function (response) {
+      if (response && response.ok) {
+        return response.json();
+      }
+      return null;
+    })
+    .then(function (metrics) {
+      applyThumbMetrics(metrics);
       renderGrid();
     })
     .catch(function (err) {
