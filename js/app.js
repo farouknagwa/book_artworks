@@ -73,6 +73,54 @@
     });
   }
 
+  function equalizeCardHeights() {
+    const cards = Array.from(grid.querySelectorAll(".card"));
+    if (!cards.length) {
+      return;
+    }
+    cards.forEach(function (card) {
+      card.style.height = "";
+    });
+    const maxHeight = Math.max.apply(
+      null,
+      cards.map(function (card) {
+        return card.offsetHeight;
+      })
+    );
+    cards.forEach(function (card) {
+      card.style.height = maxHeight + "px";
+    });
+  }
+
+  function scheduleEqualizeCardHeights() {
+    requestAnimationFrame(function () {
+      equalizeCardHeights();
+    });
+  }
+
+  function watchCardImages() {
+    const images = Array.from(grid.querySelectorAll(".card-thumb img"));
+    if (!images.length) {
+      scheduleEqualizeCardHeights();
+      return;
+    }
+    let pending = images.length;
+    function done() {
+      pending -= 1;
+      if (pending <= 0) {
+        scheduleEqualizeCardHeights();
+      }
+    }
+    images.forEach(function (img) {
+      if (img.complete) {
+        done();
+      } else {
+        img.addEventListener("load", done);
+        img.addEventListener("error", done);
+      }
+    });
+  }
+
   function renderGrid() {
     const filtered = getFilteredArtworks();
     grid.innerHTML = "";
@@ -125,6 +173,9 @@
     const isEmpty = filtered.length === 0;
     emptyState.classList.toggle("hidden", !isEmpty);
     grid.classList.toggle("hidden", isEmpty);
+    if (!isEmpty) {
+      watchCardImages();
+    }
   }
 
   function clearFilters() {
@@ -178,6 +229,8 @@
       clearFilters();
       syncQueryString();
     });
+
+    window.addEventListener("resize", scheduleEqualizeCardHeights);
   }
 
   fetch("data/catalog.json")

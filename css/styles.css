@@ -232,14 +232,15 @@ input[type="search"]:focus {
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 1rem;
   width: 100%;
+  align-items: stretch;
 }
 
 .card {
-  flex: 0 0 auto;
   cursor: pointer;
   transition: transform 0.18s ease;
   display: flex;
   flex-direction: column;
+  height: 100%;
 }
 
 .card:hover,
@@ -251,14 +252,18 @@ input[type="search"]:focus {
 .card-inner {
   position: relative;
   width: 100%;
+  height: 100%;
   overflow: hidden;
   box-shadow: var(--card-shadow);
   border-radius: var(--radius-sm);
   background: var(--white);
+  display: flex;
+  flex-direction: column;
 }
 
 .card-thumb {
-  aspect-ratio: 4 / 3;
+  flex: 0 0 auto;
+  height: 180px;
   background: var(--grey-100);
   display: grid;
   place-items: center;
@@ -268,14 +273,14 @@ input[type="search"]:focus {
 
 .card-thumb img {
   width: 100%;
-  height: auto;
-  max-height: 100%;
+  height: 100%;
   object-fit: contain;
   display: block;
   border-radius: var(--radius-sm);
 }
 
 .card-body {
+  flex: 1 1 auto;
   padding: 0.75rem 0.85rem 0.9rem;
   display: flex;
   flex-direction: column;
@@ -302,7 +307,7 @@ input[type="search"]:focus {
 }
 
 .card-hint {
-  margin: 0;
+  margin: auto 0 0;
   font-size: 0.72rem;
   line-height: 1.3;
   color: var(--grey-600);
