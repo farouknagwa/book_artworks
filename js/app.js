@@ -1,6 +1,8 @@
 (function () {
   "use strict";
 
+  const PAGE_SIZE = 50;
+
   const subjectSelect = document.getElementById("subject-select");
   const searchInput = document.getElementById("search-input");
   const clearFiltersBtn = document.getElementById("clear-filters");
@@ -10,16 +12,19 @@
   const resultsSummary = document.getElementById("results-summary");
   const totalCount = document.getElementById("total-count");
   const toast = document.getElementById("toast");
+  const pagination = document.getElementById("pagination");
+  const pagePrev = document.getElementById("page-prev");
+  const pageNext = document.getElementById("page-next");
+  const pageInfo = document.getElementById("page-info");
 
   let catalog = { subjects: [], artworks: [] };
-  let thumbMetrics = { maxHeight: 314, maxWidth: 240 };
+  let currentPage = 1;
   let toastTimer = null;
 
   function applyThumbMetrics(metrics) {
     if (!metrics || !metrics.maxHeight) {
       return;
     }
-    thumbMetrics = metrics;
     document.documentElement.style.setProperty(
       "--card-thumb-image-height",
       metrics.maxHeight + "px"
@@ -85,6 +90,14 @@
     });
   }
 
+  function getTotalPages(count) {
+    return Math.max(1, Math.ceil(count / PAGE_SIZE));
+  }
+
+  function clampPage(page, totalPages) {
+    return Math.min(Math.max(1, page), totalPages);
+  }
+
   function equalizeCardHeights() {
     const cards = Array.from(grid.querySelectorAll(".card"));
     if (!cards.length) {
@@ -133,11 +146,28 @@
     });
   }
 
-  function renderGrid() {
+  function renderPagination(totalItems, totalPages) {
+    const showPagination = totalItems > PAGE_SIZE;
+    pagination.classList.toggle("hidden", !showPagination);
+    if (!showPagination) {
+      return;
+    }
+    pageInfo.textContent = "Page " + currentPage + " of " + totalPages;
+    pagePrev.disabled = currentPage <= 1;
+    pageNext.disabled = currentPage >= totalPages;
+  }
+
+  function renderGrid(scrollToTop) {
     const filtered = getFilteredArtworks();
+    const totalPages = getTotalPages(filtered.length);
+    currentPage = clampPage(currentPage, totalPages);
+
+    const startIndex = (currentPage - 1) * PAGE_SIZE;
+    const pageItems = filtered.slice(startIndex, startIndex + PAGE_SIZE);
+
     grid.innerHTML = "";
 
-    filtered.forEach(function (item) {
+    pageItems.forEach(function (item) {
       const card = document.createElement("article");
       card.className = "card";
       card.setAttribute("role", "listitem");
@@ -178,33 +208,49 @@
       ? ' matching "' + searchInput.value.trim() + '"'
       : "";
 
-    resultsSummary.textContent =
-      "Showing " + filtered.length + " of " + catalog.artworks.length +
-      " artworks in " + subjectLabel + queryLabel + ".";
+    if (filtered.length === 0) {
+      resultsSummary.textContent = "No artworks found.";
+    } else {
+      const from = startIndex + 1;
+      const to = startIndex + pageItems.length;
+      resultsSummary.textContent =
+        "Showing " + from + "–" + to + " of " + filtered.length +
+        " artworks in " + subjectLabel + queryLabel + ".";
+    }
 
     const isEmpty = filtered.length === 0;
     emptyState.classList.toggle("hidden", !isEmpty);
     grid.classList.toggle("hidden", isEmpty);
+    renderPagination(filtered.length, totalPages);
+
     if (!isEmpty) {
       watchCardImages();
+      if (scrollToTop) {
+        grid.scrollIntoView({ behavior: "smooth", block: "start" });
+      }
     }
   }
 
   function clearFilters() {
     subjectSelect.value = "";
     searchInput.value = "";
-    renderGrid();
+    currentPage = 1;
+    renderGrid(false);
   }
 
   function initFromQuery() {
     const params = new URLSearchParams(window.location.search);
     const subject = params.get("subject");
     const q = params.get("q");
+    const page = parseInt(params.get("page") || "1", 10);
     if (subject && catalog.subjects.indexOf(subject) !== -1) {
       subjectSelect.value = subject;
     }
     if (q) {
       searchInput.value = q;
+    }
+    if (!isNaN(page) && page > 0) {
+      currentPage = page;
     }
   }
 
@@ -216,6 +262,9 @@
     if (searchInput.value.trim()) {
       params.set("q", searchInput.value.trim());
     }
+    if (currentPage > 1) {
+      params.set("page", String(currentPage));
+    }
     const next = params.toString();
     const url = next ? "?" + next : window.location.pathname;
     window.history.replaceState(null, "", url);
@@ -223,12 +272,14 @@
 
   function bindEvents() {
     subjectSelect.addEventListener("change", function () {
-      renderGrid();
+      currentPage = 1;
+      renderGrid(false);
       syncQueryString();
     });
 
     searchInput.addEventListener("input", function () {
-      renderGrid();
+      currentPage = 1;
+      renderGrid(false);
       syncQueryString();
     });
 
@@ -240,6 +291,23 @@
     emptyClearBtn.addEventListener("click", function () {
       clearFilters();
       syncQueryString();
+    });
+
+    pagePrev.addEventListener("click", function () {
+      if (currentPage > 1) {
+        currentPage -= 1;
+        renderGrid(true);
+        syncQueryString();
+      }
+    });
+
+    pageNext.addEventListener("click", function () {
+      const totalPages = getTotalPages(getFilteredArtworks().length);
+      if (currentPage < totalPages) {
+        currentPage += 1;
+        renderGrid(true);
+        syncQueryString();
+      }
     });
 
     window.addEventListener("resize", scheduleEqualizeCardHeights);
@@ -268,7 +336,7 @@
     })
     .then(function (metrics) {
       applyThumbMetrics(metrics);
-      renderGrid();
+      renderGrid(false);
     })
     .catch(function (err) {
       resultsSummary.textContent = "Could not load artwork catalog.";
