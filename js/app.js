@@ -13,6 +13,7 @@
   const totalCount = document.getElementById("total-count");
   const toast = document.getElementById("toast");
   const pagination = document.getElementById("pagination");
+  const filtersPanel = document.getElementById("filters");
   const pagePrev = document.getElementById("page-prev");
   const pageNext = document.getElementById("page-next");
   const pageInfo = document.getElementById("page-info");
@@ -225,8 +226,8 @@
 
     if (!isEmpty) {
       watchCardImages();
-      if (scrollToTop) {
-        grid.scrollIntoView({ behavior: "smooth", block: "start" });
+      if (scrollToTop && filtersPanel) {
+        filtersPanel.scrollIntoView({ behavior: "smooth", block: "start" });
       }
     }
   }
